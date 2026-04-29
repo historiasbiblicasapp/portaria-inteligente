@@ -1,35 +1,33 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const publicPaths = ['/login', '/pre-cadastro'];
 
-export async function middleware(request: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req: request, res });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const cookieHeader = request.cookies.getAll();
+  const hasSession = cookieHeader.some(c =>
+    c.name.startsWith('sb-') && c.name.includes('auth-token')
+  );
+
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
-  if (!session && !isPublicPath && pathname !== '/') {
+  if (!hasSession && !isPublicPath && pathname !== '/') {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (!session && pathname === '/') {
+  if (!hasSession && pathname === '/') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (session && (pathname === '/login' || pathname === '/')) {
+  if (hasSession && pathname === '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  return res;
+  return NextResponse.next();
 }
 
 export const config = {
