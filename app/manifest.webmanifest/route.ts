@@ -1,0 +1,53 @@
+import { NextResponse } from 'next/server';
+
+export function GET() {
+  const manifest = {
+    name: 'Portaria Inteligente',
+    short_name: 'Portaria',
+    description: 'Sistema de controle de acesso e portaria',
+    start_url: '/dashboard',
+    display: 'standalone',
+    background_color: '#f9fafb',
+    theme_color: '#2563eb',
+    orientation: 'portrait',
+    scope: '/',
+    icons: [
+      {
+        src: '/icon-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any maskable',
+      },
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any maskable',
+      },
+    ],
+    categories: ['business', 'productivity'],
+    shortcuts: [
+      {
+        name: 'Nova Entrada',
+        short_name: 'Entrada',
+        description: 'Registrar entrada de visitante',
+        url: '/acessos',
+        icons: [{ src: '/icon-192.png', sizes: '192x192' }],
+      },
+      {
+        name: 'Scanner QR',
+        short_name: 'Scanner',
+        description: 'Escanear QR Code',
+        url: '/scanner',
+        icons: [{ src: '/icon-192.png', sizes: '192x192' }],
+      },
+    ],
+  };
+
+  return new NextResponse(JSON.stringify(manifest), {
+    headers: {
+      'Content-Type': 'application/manifest+json',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+}
