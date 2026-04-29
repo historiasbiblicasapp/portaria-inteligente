@@ -24,7 +24,12 @@ export default function LoginPage() {
     const { error } = await signIn(email, password);
 
     if (error) {
-      setError('E-mail ou senha inválidos');
+      const messages: Record<string, string> = {
+        'Invalid login credentials': 'E-mail ou senha inválidos',
+        'Email not confirmed': 'E-mail não confirmado. Verifique sua caixa de entrada.',
+        'Invalid email': 'E-mail inválido',
+      };
+      setError(messages[error.message] || error.message);
       setLoading(false);
     } else {
       router.push(redirect);
