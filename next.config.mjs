@@ -3,7 +3,13 @@ import withPWA from 'next-pwa';
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['*.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        pathname: '/storage/**',
+      },
+    ],
   },
 };
 
@@ -12,6 +18,7 @@ const pwaConfig = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  sw: 'sw.js',
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
