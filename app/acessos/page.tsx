@@ -32,21 +32,18 @@ export default function AcessosPage() {
       let acessosList: (Acesso & { pessoa?: Pessoa | null })[] = [];
       let pessoasList: Pessoa[] = [];
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data } = await supabase
-          .from('acessos')
-          .select('*, pessoa: pessoas(*)')
-          .order('data_entrada', { ascending: false})
-          .limit(200);
-        acessosList = data || [];
+      const { data } = await supabase
+        .from('acessos')
+        .select('*, pessoa: pessoas(*)')
+        .order('data_entrada', { ascending: false})
+        .limit(200);
+      acessosList = data || [];
 
-        const { data: pessoasData } = await supabase
-          .from('pessoas')
-          .select('*')
-          .order('nome');
-        pessoasList = pessoasData || [];
-      }
+      const { data: pessoasData } = await supabase
+        .from('pessoas')
+        .select('*')
+        .order('nome');
+      pessoasList = pessoasData || [];
 
       const dbAcessos = await dbService.getAcessos();
       const dbPessoas = await dbService.getPessoas();
@@ -104,13 +101,10 @@ export default function AcessosPage() {
         data_saida: new Date().toISOString(),
       });
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase
-          .from('acessos')
-          .update({ data_saida: new Date().toISOString() })
-          .eq('id', acessoId);
-      }
+      await supabase
+        .from('acessos')
+        .update({ data_saida: new Date().toISOString() })
+        .eq('id', acessoId);
       await loadData();
     } catch (error) {
       console.error('Erro ao registrar saída:', error);

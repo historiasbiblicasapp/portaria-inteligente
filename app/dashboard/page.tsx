@@ -30,25 +30,21 @@ export default function DashboardPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-
       let acessos: (Acesso & { pessoa?: Pessoa | null })[] = [];
       let pessoas: Pessoa[] = [];
 
-      if (session) {
-        const { data: acessosData } = await supabase
-          .from('acessos')
-          .select('*, pessoa: pessoas(*)')
-          .order('data_entrada', { ascending: false })
-          .limit(100);
-        acessos = acessosData || [];
+      const { data: acessosData } = await supabase
+        .from('acessos')
+        .select('*, pessoa: pessoas(*)')
+        .order('data_entrada', { ascending: false })
+        .limit(100);
+      acessos = acessosData || [];
 
-        const { data: pessoasData } = await supabase
-          .from('pessoas')
-          .select('*')
-          .order('created_at', { ascending: false });
-        pessoas = pessoasData || [];
-      }
+      const { data: pessoasData } = await supabase
+        .from('pessoas')
+        .select('*')
+        .order('created_at', { ascending: false });
+      pessoas = pessoasData || [];
 
       const dbAcessos = await dbService.getAcessos();
       const dbPessoas = await dbService.getPessoas();

@@ -32,22 +32,19 @@ export default function PessoaDetailPage() {
       let p: Pessoa | undefined;
       let a: Acesso[] = [];
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: pessoaData } = await supabase
-          .from('pessoas')
-          .select('*')
-          .eq('id', params.id)
-          .single();
-        p = pessoaData || undefined;
+      const { data: pessoaData } = await supabase
+        .from('pessoas')
+        .select('*')
+        .eq('id', params.id)
+        .single();
+      p = pessoaData || undefined;
 
-        const { data: acessosData } = await supabase
-          .from('acessos')
-          .select('*')
-          .eq('pessoa_id', params.id)
-          .order('data_entrada', { ascending: false });
-        a = acessosData || [];
-      }
+      const { data: acessosData } = await supabase
+        .from('acessos')
+        .select('*')
+        .eq('pessoa_id', params.id)
+        .order('data_entrada', { ascending: false });
+      a = acessosData || [];
 
       const dbPessoa = await dbService.getPessoaById(params.id as string);
       if (dbPessoa && !p) p = dbPessoa;
@@ -86,13 +83,10 @@ export default function PessoaDetailPage() {
           data_saida: new Date().toISOString(),
         });
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase
-            .from('acessos')
-            .update({ data_saida: new Date().toISOString() })
-            .eq('id', acessoAberto.id);
-        }
+        await supabase
+          .from('acessos')
+          .update({ data_saida: new Date().toISOString() })
+          .eq('id', acessoAberto.id);
       }
       await loadData();
     } catch (error) {
@@ -105,10 +99,7 @@ export default function PessoaDetailPage() {
     if (!confirm('Tem certeza que deseja excluir este visitante?')) return;
     try {
       await dbService.deletePessoa(pessoa!.id!);
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase.from('pessoas').delete().eq('id', pessoa!.id!);
-      }
+      await supabase.from('pessoas').delete().eq('id', pessoa!.id!);
       router.push('/visitantes');
     } catch (error) {
       console.error('Erro ao excluir:', error);

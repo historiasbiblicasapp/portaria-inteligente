@@ -5,12 +5,7 @@ const publicPaths = ['/login', '/pre-cadastro'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  const cookieHeader = request.cookies.getAll();
-  const hasSession = cookieHeader.some(c =>
-    c.name.startsWith('sb-') && c.name.includes('auth-token')
-  );
-
+  const hasSession = request.cookies.has('pi-session');
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   if (!hasSession && !isPublicPath && pathname !== '/') {

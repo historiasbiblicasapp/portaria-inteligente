@@ -41,15 +41,12 @@ export default function EditarPessoaPage() {
     try {
       let pessoa: Pessoa | undefined;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data } = await supabase
-          .from('pessoas')
-          .select('*')
-          .eq('id', params.id)
-          .single();
-        pessoa = data;
-      }
+      const { data } = await supabase
+        .from('pessoas')
+        .select('*')
+        .eq('id', params.id)
+        .single();
+      pessoa = data;
 
       const dbPessoa = await dbService.getPessoaById(params.id as string);
       if (dbPessoa && !pessoa) pessoa = dbPessoa;

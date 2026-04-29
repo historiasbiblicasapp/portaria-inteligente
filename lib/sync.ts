@@ -7,9 +7,6 @@ export async function syncData(): Promise<{ synced: number; errors: number }> {
   let errors = 0;
 
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return { synced: 0, errors: 0 };
-
     const acessosPendentes = await dbService.getAcessosNaoSincronizados();
     for (const acesso of acessosPendentes) {
       try {
@@ -66,9 +63,6 @@ export async function syncData(): Promise<{ synced: number; errors: number }> {
 
 export async function syncFromSupabase(): Promise<void> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
     const { data: pessoas } = await supabase
       .from('pessoas')
       .select('*')
@@ -105,14 +99,11 @@ export async function savePessoa(pessoa: Omit<Pessoa, 'id'> & { id?: string }): 
   const online = navigator.onLine;
   if (online) {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { error } = await supabase
-          .from('pessoas')
-          .upsert(pessoaCompleta);
+      const { error } = await supabase
+        .from('pessoas')
+        .upsert(pessoaCompleta);
 
-        if (error) throw error;
-      }
+      if (error) throw error;
     } catch {
       // Salvo localmente, sync depois
     }
@@ -134,14 +125,11 @@ export async function saveAcesso(acesso: Omit<Acesso, 'id'> & { id?: string }): 
   const online = navigator.onLine;
   if (online) {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { error } = await supabase
-          .from('acessos')
-          .upsert(acessoCompleto);
+      const { error } = await supabase
+        .from('acessos')
+        .upsert(acessoCompleto);
 
-        if (error) throw error;
-      }
+      if (error) throw error;
     } catch {
       // Salvo localmente, sync depois
     }

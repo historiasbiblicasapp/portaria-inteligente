@@ -20,16 +20,11 @@ export default function VisitantesPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      let list: Pessoa[] = [];
-
-      if (session) {
-        const { data } = await supabase
-          .from('pessoas')
-          .select('*')
-          .order('created_at', { ascending: false });
-        list = data || [];
-      }
+      const { data } = await supabase
+        .from('pessoas')
+        .select('*')
+        .order('created_at', { ascending: false });
+      let list: Pessoa[] = data || [];
 
       const dbList = await dbService.getPessoas();
       if (dbList.length > list.length) list = dbList;

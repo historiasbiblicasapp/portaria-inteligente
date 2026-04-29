@@ -71,15 +71,12 @@ export default function ScannerPage() {
     try {
       let pessoa: Pessoa | undefined;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data } = await supabase
-          .from('pessoas')
-          .select('*')
-          .eq('qr_code', code)
-          .single();
-        pessoa = data;
-      }
+      const { data } = await supabase
+        .from('pessoas')
+        .select('*')
+        .eq('qr_code', code)
+        .single();
+      pessoa = data;
 
       if (!pessoa) {
         pessoa = await dbService.getPessoaByQRCode(code);
@@ -133,13 +130,10 @@ export default function ScannerPage() {
         data_saida: new Date().toISOString(),
       });
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase
-          .from('acessos')
-          .update({ data_saida: new Date().toISOString() })
-          .eq('id', acessoAberto.id);
-      }
+      await supabase
+        .from('acessos')
+        .update({ data_saida: new Date().toISOString() })
+        .eq('id', acessoAberto.id);
       setAcessoAberto(null);
     } catch (error) {
       console.error('Erro ao registrar saída:', error);
