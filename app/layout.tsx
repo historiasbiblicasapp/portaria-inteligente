@@ -13,10 +13,9 @@ export const metadata: Metadata = {
   applicationName: 'Portaria Inteligente',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Portaria',
   },
-  mobileWebAppCapable: 'yes',
   formatDetection: {
     telephone: false,
   },
